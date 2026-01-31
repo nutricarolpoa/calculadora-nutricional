@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora Nutricional</title>
+
+  <style>
+    :root{
+      --bg: #F6F1EA;
+      --card: #FFFFFF;
+      --border: #E6D9CC;
+      --shadow: rgba(0,0,0,.06);
+
+      --text: #1F1F1F;
+      --muted: #6E5B4B;
+
+      --brand: #8B5E3C;
+      --brand-dark: #734B30;
+      --accent: #6B7A4E;
+      --accent-dark: #55613E;
+
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--bg);
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      padding: 22px;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px var(--shadow);
+      padding: 26px 22px 20px;
+      animation: fadeInUp .45s ease-out both;
+    }
+
+    .top {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .top .name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--brand);
+    }
+
+    .top .sub {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .top a {
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .top a:hover {
+      text-decoration: underline;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px;
+      margin-top: 6px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      border-color: rgba(139, 94, 60, .55);
+      box-shadow: 0 0 0 3px rgba(139, 94, 60, .12);
+      outline: none;
+    }
+
+    .btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 12px;
+    }
+
+    .btn:hover { background: var(--brand-dark); }
+
+    .btn-whats {
+      background: var(--accent);
+    }
+
+    .btn-whats:hover {
+      background: var(--accent-dark);
+    }
+
+    #resultado {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #FBF8F5;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      white-space: pre-line;
+      min-height: 64px;
+      color: #2B2621;
+    }
+
+    .mini {
+      margin-top: 10px;
+      font-size: 11.5px;
+      color: #7A6A5F;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <div class="top">
+      <div class="name">Nutricionista Ana Caroline</div>
+      <div class="sub">
+        CRN2 19644 ·
+        <a href="https://instagram.com/nutricarolpoa" target="_blank">
+          @nutricarolpoa
+        </a>
+      </div>
+    </div>
+
+    <label>Seu nome</label>
+    <input type="text" id="nome">
+
+    <label>Telefone / WhatsApp</label>
+    <input type="text" id="telefone">
+
+    <label>Sexo</label>
+    <select id="sexo">
+      <option value="F">Feminino</option>
+      <option value="M">Masculino</option>
+    </select>
+
+    <label>Idade</label>
+    <input type="text" id="idade">
+
+    <label>Altura (cm)</label>
+    <input type="text" id="altura">
+
+    <label>Peso (kg)</label>
+    <input type="text" id="peso">
+
+    <label>Fator de atividade</label>
+    <select id="atividade">
+      <option value="1.2">Sedentário</option>
+      <option value="1.375">Leve</option>
+      <option value="1.55">Moderado</option>
+      <option value="1.725">Intenso</option>
+    </select>
+
+    <label>Objetivo</label>
+    <select id="objetivo">
+      <option value="manter">Manter peso</option>
+      <option value="perder">Perder peso</option>
+    </select>
+
+    <button class="btn" id="btn">Calcular</button>
+
+    <div id="resultado">Resultado aparece aqui</div>
+
+    <button class="btn btn-whats" id="btnWhats">Fale com a Nutri 💬</button>
+
+    <div class="mini">
+      Ao calcular, você concorda em fornecer seus dados para contato profissional.
+    </div>
+
+  </div>
+
+  <script>
+    var URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzNqBU1DYuKvNQSGK3RykL-w_AhtPJimBQWcz96kNfXy_m7TS6-kl7wVL5kU-4XwVBr/exec";
+
+    var ultimoIMC = "";
+    var ultimaClassificacao = "";
+    var ultimoObjetivo = "";
+    var ultimaKcal = "";
+
+    function n(v){ return Number((v||"").replace(",", ".")); }
+    function tel(t){ return (t||"").replace(/\D/g,""); }
+
+    function imcCat(i){
+      if(i<18.5) return "Abaixo do peso";
+      if(i<25) return "Peso adequado";
+      if(i<30) return "Sobrepeso";
+      if(i<35) return "Obesidade grau I";
+      if(i<40) return "Obesidade grau II";
+      return "Obesidade grau III";
+    }
+
+    function calcular(){
+      var r = document.getElementById("resultado");
+
+      var nome = document.getElementById("nome").value.trim();
+      var telefone = tel(document.getElementById("telefone").value);
+      var sexo = document.getElementById("sexo").value;
+      var idade = n(document.getElementById("idade").value);
+      var altura = n(document.getElementById("altura").value);
+      var peso = n(document.getElementById("peso").value);
+      var atividade = Number(document.getElementById("atividade").value);
+      var objetivo = document.getElementById("objetivo").value;
+
+      if(nome.length<2 || telefone.length<10 || !idade || !altura || !peso){
+        r.innerText = "Preencha todos os campos corretamente.";
+        return;
+      }
+
+      var imc = peso / Math.pow(altura/100,2);
+      ultimoIMC = imc.toFixed(1);
+      ultimaClassificacao = imcCat(imc);
+      ultimoObjetivo = objetivo === "perder" ? "Perder peso" : "Manter peso";
+
+      var kcalKg = sexo==="F"?25:30;
+      if(idade>30 && idade<=60) kcalKg-=2;
+      if(idade>60) kcalKg-=4;
+
+      var kcal = Math.round(peso * kcalKg * atividade - (objetivo==="perder"?500:0));
+      ultimaKcal = kcal;
+
+      r.innerText =
+        "Seu IMC é " + ultimoIMC + " e você está na " + ultimaClassificacao + ".\n" +
+        "Seu plano alimentar deve ter em torno de " + kcal + " kcal por dia.";
+
+      var img = new Image();
+      img.src = URL_SCRIPT +
+        "?nome="+encodeURIComponent(nome)+
+        "&telefone="+telefone+
+        "&sexo="+sexo+
+        "&idade="+idade+
+        "&altura="+altura+
+        "&peso="+peso+
+        "&objetivo="+objetivo+
+        "&kcal="+kcal+
+        "&t="+Date.now();
+    }
+
+    document.getElementById("btn").onclick = calcular;
+
+    document.getElementById("btnWhats").onclick = function(){
+      if(!ultimoIMC){ alert("Faça o cálculo primeiro 🙂"); return; }
+
+      var nome = document.getElementById("nome").value || "Oi";
+      var msg =
+        "Oi, sou "+nome+" 😊\n\n"+
+        "IMC: "+ultimoIMC+"\n"+
+        "Classificação: "+ultimaClassificacao+"\n"+
+        "Objetivo: "+ultimoObjetivo+"\n"+
+        "Calorias: "+ultimaKcal+" kcal";
+
+      window.open("https://wa.me/5551998673867?text="+encodeURIComponent(msg));
+    };
+  </script>
+
+</body>
+</html>
